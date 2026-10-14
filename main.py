@@ -7,16 +7,7 @@ def main() -> int:
     client = SampleApisCoffeeClient()
     marker = uuid4().hex[:8]
     created_id = None
-
-# GET коллекции.
-# POST: исследуйте поля, добавьте marker в название.
-# Сразу сохраните id из ответа в created_id.
-# GET: сравните сохранённые поля с отправленными.
-# PUT и повторный GET: проверьте все заменённые поля.
-# PATCH и повторный GET: проверьте изменённое поле
-# и убедитесь, что остальные поля сохранились.
-# DELETE и GET: убедитесь, что вернулся ожидаемый 404.
-# После подтверждения удаления: created_id = None.
+    
     try:
         print(client.list_drinks())
         created_drink = client.create_drink({
