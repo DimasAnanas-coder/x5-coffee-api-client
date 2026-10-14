@@ -21,28 +21,22 @@ class HTTPClient:
         url = f"{self.base_url}{path}"
         match method:
             case "GET":
-                response = requests.get(
+                return requests.get(
                     url=url,
                     timeout=self.timeout,
                 )
-                response.raise_for_status()
-                return response.json()
             case "POST":
-                response = requests.post(
+                return requests.post(
                     url=url,
                     timeout=self.timeout,
                     json=payload,
                 )
-                response.raise_for_status()
-                return response
             case "PUT":
-                response = requests.put(
+                return requests.put(
                     url=url,
                     timeout=self.timeout,
                     json=payload,
                 )
-                response.raise_for_status()
-                return response
 
             case "PATCH":
                 response = requests.patch(
