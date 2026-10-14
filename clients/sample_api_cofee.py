@@ -1,4 +1,8 @@
+from .http import HTTPClient
+from exceptions import CoffeeNotFoundError, CoffeeApiErrors
+
 from models import JsonObject
+
 
 class SampleApisCoffeeClient:
     def __init__(
@@ -6,31 +10,94 @@ class SampleApisCoffeeClient:
         base_url: str = "https://api.sampleapis.com/coffee/hot",
         timeout: float = 10.0,
     ) -> None:
-        self._base_url = base_url.rstrip("/")
-        self._timeout = timeout
+        base_url = base_url.rstrip("/")
+        self.http_client = HTTPClient(base_url, timeout)
 
     def list_drinks(self) -> list[JsonObject]:
-        raise NotImplementedError
+        try:
+            response = self.http_client.request("GET", "/")
+            if response.status != 200:
+                raise CoffeeApiErrors
+            return response.json()
+        except CoffeeApiErrors:
+            raise
+        except Exception as e:
+            raise CoffeeApiErrors(e)
 
     def get_drink(self, drink_id: int) -> JsonObject:
-        raise NotImplementedError
+        try:
+            response = self.http_client.request("GET", f"/{drink_id}")
+            if response.status == 404:
+                raise CoffeeNotFoundError
+            elif response.status != 200:
+                raise CoffeeApiErrors
+            return response.json()
+        except CoffeeNotFoundError:
+            raise
+        except CoffeeApiErrors:
+            raise
+        except Exception as e:
+            raise CoffeeApiErrors(e)
 
     def create_drink(self, payload: JsonObject) -> JsonObject:
-        raise NotImplementedError
+        try:
+            response = self.http_client.request("POST", "/", payload)
+            if response.status != 201:
+                raise CoffeeApiErrors
+            return response.json()
+        except CoffeeApiErrors:
+            raise
+        except Exception as e:
+            raise CoffeeApiErrors(e)
 
     def replace_drink(
         self,
         drink_id: int,
         payload: JsonObject,
     ) -> JsonObject:
-        raise NotImplementedError
+        try:
+            response = self.http_client.request("PUT", f"/{drink_id}", payload)
+            if response.status == 404:
+                raise CoffeeNotFoundError
+            elif response.status != 200:
+                raise CoffeeApiErrors
+            return response.json()
+        except CoffeeNotFoundError:
+            raise
+        except CoffeeApiErrors:
+            raise
+        except Exception as e:
+            raise CoffeeApiErrors(e)
 
     def update_drink(
         self,
         drink_id: int,
         changes: JsonObject,
     ) -> JsonObject:
-        raise NotImplementedError
+        try:
+            response = self.http_client.request("PATCH", f"/{drink_id}", changes)
+            if response.status == 404:
+                raise CoffeeNotFoundError
+            elif response.status != 200:
+                raise CoffeeApiErrors
+            return response.json()
+        except CoffeeNotFoundError:
+            raise
+        except CoffeeApiErrors:
+            raise
+        except Exception as e:
+            raise CoffeeApiErrors(e)
 
     def delete_drink(self, drink_id: int) -> None:
-        raise NotImplementedError
+        try:
+            response = self.http_client.request("DELETE", f"/{drink_id}")
+            if response.status == 404:
+                raise CoffeeNotFoundError
+            elif response.status not in (200, 204):
+                raise CoffeeApiErrors
+        except CoffeeNotFoundError:
+            raise
+        except CoffeeApiErrors:
+            raise
+        except Exception as e:
+            raise CoffeeApiErrors(e)
