@@ -4,7 +4,6 @@ from abc import ABC, abstractclassmethod
 from models import JsonObject
 
 from requests.exceptions import RequestException, Timeout, HTTPError, ConnectionError
-from exceptions import HTTPError
 
 
 class HTTPClient:
