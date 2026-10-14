@@ -7,8 +7,50 @@ def main() -> int:
     client = SampleApisCoffeeClient()
     marker = uuid4().hex[:8]
     created_id = None
+
+# GET коллекции.
+# POST: исследуйте поля, добавьте marker в название.
+# Сразу сохраните id из ответа в created_id.
+# GET: сравните сохранённые поля с отправленными.
+# PUT и повторный GET: проверьте все заменённые поля.
+# PATCH и повторный GET: проверьте изменённое поле
+# и убедитесь, что остальные поля сохранились.
+# DELETE и GET: убедитесь, что вернулся ожидаемый 404.
+# После подтверждения удаления: created_id = None.
     try:
-        raise NotImplementedError("Заполните этапы сценария")
+        print(client.list_drinks())
+        created_drink = client.create_drink({
+            "title": f"Test drink {marker}",
+            "description": f"Test description {marker}",
+            "ingredients": [
+                "coffee", 
+                "water", 
+            ], 
+            "image": "test.jpg",
+        })
+        created_id = created_drink.get("id")
+        if created_id is None:
+            raise CoffeeApiError("Не удалось получить id созданного напитка")
+        client.replace_drink(created_id, {
+            "title": f"Test drink {marker} replaced",
+            "description": f"Test description {marker} replaced",
+            "ingredients": [
+                "coffee", 
+                "water", 
+            ], 
+            "image": "test2.jpg",
+        })
+        print(client.get_drink(created_id))
+        client.update_drink(created_id, {
+            "title": f"Test drink {marker} updated"
+        })
+        print(client.get_drink(created_id))
+        client.delete_drink(created_id)
+        print(client.get_drink(created_id))
+        created_id = None
+    except CoffeeNotFoundError:
+        print(f"Не удалось найти напиток с id={created_id}")
+        return 1
     except (CoffeeApiError, ValueError) as error:
         print(f"Ошибка: {error}. Метка группы: {marker}")
         return 1
