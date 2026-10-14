@@ -29,6 +29,8 @@ class SampleApisCoffeeClient:
             response = self.http_client.request("GET", f"/{drink_id}")
             if response.status == 404:
                 raise CoffeeNotFoundError
+            elif response.status in (400, 422):
+                raise CoffeeApiErrors("Invalid request")
             elif response.status != 200:
                 raise CoffeeApiErrors
             return response.json()
@@ -42,7 +44,11 @@ class SampleApisCoffeeClient:
     def create_drink(self, payload: JsonObject) -> JsonObject:
         try:
             response = self.http_client.request("POST", "/", payload)
-            if response.status != 201:
+            if response.status == 400:
+                raise CoffeeApiErrors("Malformed request")
+            elif response.status == 422:
+                raise CoffeeApiErrors("Validation failed")
+            elif response.status != 201:
                 raise CoffeeApiErrors
             return response.json()
         except CoffeeApiErrors:
@@ -59,6 +65,10 @@ class SampleApisCoffeeClient:
             response = self.http_client.request("PUT", f"/{drink_id}", payload)
             if response.status == 404:
                 raise CoffeeNotFoundError
+            elif response.status == 400:
+                raise CoffeeApiErrors("Malformed request")
+            elif response.status == 422:
+                raise CoffeeApiErrors("Validation failed")
             elif response.status != 200:
                 raise CoffeeApiErrors
             return response.json()
@@ -78,6 +88,10 @@ class SampleApisCoffeeClient:
             response = self.http_client.request("PATCH", f"/{drink_id}", changes)
             if response.status == 404:
                 raise CoffeeNotFoundError
+            elif response.status == 400:
+                raise CoffeeApiErrors("Malformed request")
+            elif response.status == 422:
+                raise CoffeeApiErrors("Validation failed")
             elif response.status != 200:
                 raise CoffeeApiErrors
             return response.json()
@@ -93,6 +107,8 @@ class SampleApisCoffeeClient:
             response = self.http_client.request("DELETE", f"/{drink_id}")
             if response.status == 404:
                 raise CoffeeNotFoundError
+            elif response.status in (400, 422):
+                raise CoffeeApiErrors("Invalid request")
             elif response.status not in (200, 204):
                 raise CoffeeApiErrors
         except CoffeeNotFoundError:
