@@ -51,16 +51,15 @@ class HTTPClient:
             raise ServerUnavailableError("Сервер недоступен")
 
     def __process_request(self, url: str, method: str, payload: JsonObject | None = None) -> requests.Response:
-        match method:
-            case GET:
-                return requests.get(url, timeout = self.timeout)
-            case POST:
-                return requests.post(url, json=payload, timeout = self.timeout)
-            case PUT:
-                return requests.put(url, json=payload, timeout = self.timeout)
-            case PATCH:
-                return requests.patch(url, json=payload, timeout = self.timeout)
-            case DELETE:
-                return requests.delete(url, timeout = self.timeout)
-            case _:
-                raise ValueError(f"Неизвестный метод: {method}")
+        if method == GET:
+            return requests.get(url, timeout = self.timeout)
+        elif method == POST:
+            return requests.post(url, json=payload, timeout = self.timeout)
+        elif method == PUT:
+            return requests.put(url, json=payload, timeout = self.timeout)
+        elif method == PATCH:
+            return requests.patch(url, json=payload, timeout = self.timeout)
+        elif method == DELETE:
+            return requests.delete(url, timeout = self.timeout)
+        else:
+            raise ValueError(f"Неизвестный метод: {method}")
