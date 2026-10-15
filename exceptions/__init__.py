@@ -9,6 +9,13 @@ from .base_exception import (
     InvalidContentTypeError,
 )
 
+from .coffee_api_exception import (
+    CoffeeApiError,
+    CoffeeNotFoundError,
+    CoffeeBadRequestError,
+    CoffeeUnprocessableEntityError,
+)
+
 __all__ = [
     "BadRequestError",
     "NotFoundError",
@@ -18,4 +25,9 @@ __all__ = [
     "ServerUnavailableError",
     "UnknownError",
     "InvalidContentTypeError",
+
+    "CoffeeApiError",
+    "CoffeeNotFoundError",
+    "CoffeeBadRequestError",
+    "CoffeeUnprocessableEntityError",
 ]

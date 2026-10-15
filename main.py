@@ -1,7 +1,7 @@
 from uuid import uuid4
-from clients.sample_api_cofee import SampleApisCoffeeClient
+from clients.sample_api_coffee import SampleApisCoffeeClient
 
-from exceptions import CoffeeApiError, CoffeeNotFoundError
+from exceptions import CoffeeApiError, CoffeeNotFoundError, CoffeeUnprocessableEntityError, CoffeeBadRequestError
 from mock import CREATE_DRINK_REQUEST, PUT_DRINK_REQUEST
 
 def main() -> int:
@@ -36,12 +36,23 @@ def main() -> int:
         print("После удаления:")
         print(client.get_drink(created_id), end="\n\n")
         created_id = None
+
     except CoffeeNotFoundError:
         print(f"Не удалось найти напиток с id={created_id}")
         return 1
+    
+    except CoffeeUnprocessableEntityError:
+        print("Переданные аргументы не проходят валидацию")
+        return 1
+
+    except CoffeeBadRequestError:
+        print("Переданы неверные параметры к запросу")
+        return 1
+    
     except (CoffeeApiError, ValueError) as error:
         print(f"Ошибка: {error}. Метка группы: {marker}")
         return 1
+    
     finally:
         if created_id is not None:
             try:
