@@ -1,0 +1,6 @@
+GET = "GET"
+POST = "POST"
+PUT = "PUT"
+PATCH = "PATCH"
+DELETE = "DELETE"
+CONTENT_TYPE = "application/json"
