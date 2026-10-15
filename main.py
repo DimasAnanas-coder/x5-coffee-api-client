@@ -2,6 +2,7 @@ from uuid import uuid4
 from clients.sample_api_cofee import SampleApisCoffeeClient
 
 from exceptions import CoffeeApiError, CoffeeNotFoundError
+from mock import CREATE_DRINK_REQUEST, PUT_DRINK_REQUEST
 
 def main() -> int:
     client = SampleApisCoffeeClient()
@@ -9,35 +10,31 @@ def main() -> int:
     created_id = None
     
     try:
-        print(client.list_drinks())
+        print("Список напитков:")
+        print(client.list_drinks(), end="\n\n")
         created_drink = client.create_drink({
+            **CREATE_DRINK_REQUEST,
             "title": f"Test drink {marker}",
-            "description": f"Test description {marker}",
-            "ingredients": [
-                "coffee", 
-                "water", 
-            ], 
-            "image": "test.jpg",
         })
+        print("После добавления:")
+        print(created_drink, end="\n\n")
         created_id = created_drink.get("id")
         if created_id is None:
             raise CoffeeApiError("Не удалось получить id созданного напитка")
         client.replace_drink(created_id, {
+            **PUT_DRINK_REQUEST,
             "title": f"Test drink {marker} replaced",
-            "description": f"Test description {marker} replaced",
-            "ingredients": [
-                "coffee", 
-                "water", 
-            ], 
-            "image": "test2.jpg",
         })
-        print(client.get_drink(created_id))
+        print("После замены:")
+        print(client.get_drink(created_id), end="\n\n")
         client.update_drink(created_id, {
             "title": f"Test drink {marker} updated"
         })
-        print(client.get_drink(created_id))
+        print("После изменения:")
+        print(client.get_drink(created_id), end="\n\n")
         client.delete_drink(created_id)
-        print(client.get_drink(created_id))
+        print("После удаления:")
+        print(client.get_drink(created_id), end="\n\n")
         created_id = None
     except CoffeeNotFoundError:
         print(f"Не удалось найти напиток с id={created_id}")
